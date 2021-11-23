@@ -2,10 +2,12 @@ package main
 
 import (
 	// "gomicro-quickstart/grpc_demo/service"
+	"fmt"
 	"log"
 	"net"
 
 	"CoolCar/service"
+
 	"google.golang.org/grpc"
 )
 
@@ -23,6 +25,7 @@ func main() {
 		log.Fatal("服务监听端口失败", err)
 	}
 
+	fmt.Println("start grpc Server")
 	// 4. 运行rpcServer，传入listener
 	_ = rpcServer.Serve(listener)
 
