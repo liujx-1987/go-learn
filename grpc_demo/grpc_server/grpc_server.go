@@ -2,16 +2,32 @@ package main
 
 import (
 	// "gomicro-quickstart/grpc_demo/service"
+	"context"
 	"fmt"
 	"log"
 	"net"
 	"net/http"
 
-	"CoolCar/service"
+	"CoolCar/proto/product"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
+
+//ProdServiceServer is the server API for ProdService service.
+// type ProdServiceServer interface {
+//	定义方法
+//	// GetProductStock(context.Context, *ProductRequest) (*ProductResponse, error)
+// }
+
+type ProductService struct {
+}
+
+func (*ProductService) GetProductStock(c context.Context, req *product.ProductRequest) (*product.ProductResponse, error) {
+	return &product.ProductResponse{
+		ProdStock: req.ProdId,
+	}, nil
+}
 
 func main() {
 	// grpc_main()
@@ -21,7 +37,7 @@ func main() {
 
 func grpc_main() {
 	// 1. 引用证书
-	tls, err := credentials.NewServerTLSFromFile("./keys/cert.pem", "./keys/key.pem")
+	tls, err := credentials.NewServerTLSFromFile("../../keys/cert.pem", "../../keys/key.pem")
 	if err != nil {
 		log.Fatal("服务端获取证书失败: ", err)
 	}
@@ -30,7 +46,7 @@ func grpc_main() {
 	rpcServer := grpc.NewServer(grpc.Creds(tls))
 
 	// 3. 将刚刚我们新建的ProdService注册进去
-	service.RegisterProdServiceServer(rpcServer, new(service.ProductService))
+	product.RegisterProdServiceServer(rpcServer, new(ProductService))
 
 	// 4. 新建一个listener，以tcp方式监听8082端口
 	listener, err := net.Listen("tcp", ":8082")
@@ -45,7 +61,7 @@ func grpc_main() {
 
 func grpc_http() {
 	// 1. 引用证书
-	tls, err := credentials.NewServerTLSFromFile("./keys/cert.pem", "./keys/key.pem")
+	tls, err := credentials.NewServerTLSFromFile("../../keys/cert.pem", "../../keys/key.pem")
 	if err != nil {
 		log.Fatal("服务端获取证书失败: ", err)
 	}
@@ -54,7 +70,7 @@ func grpc_http() {
 	rpcServer := grpc.NewServer(grpc.Creds(tls))
 
 	// 3. 将刚刚我们新建的ProdService注册进去
-	service.RegisterProdServiceServer(rpcServer, new(service.ProductService))
+	product.RegisterProdServiceServer(rpcServer, new(ProductService))
 
 	// 4. 新建一个路由，并传入rpcServer
 	mux := http.NewServeMux()
@@ -72,6 +88,6 @@ func grpc_http() {
 	fmt.Println("start grpc Server")
 
 	// 6. 以https形式监听httpServer
-	httpServer.ListenAndServeTLS("./keys/cert.pem", "./keys/key.pem")
+	httpServer.ListenAndServeTLS("../../keys/cert.pem", "../../keys/key.pem")
 
 }

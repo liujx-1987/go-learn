@@ -4,10 +4,10 @@
 syntax = "proto3";
 
 // 指定等会文件生成出来的package
-package service;
+package product;
 
-// .;表示当前目录， service表示package
-option go_package = ".;service";
+// .;表示当前目录， product表示package
+option go_package = ".;product";
 
 // 定义request
 message ProductRequest{
